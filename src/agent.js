@@ -73,7 +73,7 @@ class Agent {
                         if (i == k || j == k) continue
                         const pos = positionCalculator(fv[i], fv[j], fv[k]);
                         // console.log(pos.err)
-                        if (min_err > pos.err || min_err === -1) {
+                        if (min_err > pos.err && Math.abs(pos.x) < 80 && Math.abs(pos.y) < 80) {
                             this.pos = pos
                             min_err = pos.err
                         }
@@ -94,7 +94,7 @@ class Agent {
                         if (i == k || j == k) continue
                         const pos = positionCalculator(fv1[i], fv1[j], fv1[k]);
                         // console.log(pos.err)
-                        if (min_err > pos.err && Math.abs(pos.x) < 80 && Math.abs(pos.y) < 80 || min_err === -1) {
+                        if (min_err > pos.err && Math.abs(pos.x) < 80 && Math.abs(pos.y) < 80) {
                             see_players.x = pos.x
                             see_players.y = pos.y
                             min_err = pos.err

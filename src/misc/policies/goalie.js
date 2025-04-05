@@ -189,7 +189,7 @@ const DT = {
     catchBall2: {
         condition: (mgr, state) => {
             console.log('here1', mgr.getDistance('b'), mgr.getDistChange('b'));
-            return Math.abs(mgr.getDistChange(state.action.fl)) > 1;
+            return Math.abs(mgr.getDistChange(state.action.fl)) > 0.1;
         },
         trueCond: "catchBallAction",
         falseCond: "farGoal",

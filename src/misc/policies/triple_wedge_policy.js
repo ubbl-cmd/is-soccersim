@@ -36,7 +36,7 @@ const DT = {
     mateAtPoint: {
         condition: (mgr, state) => {
             for (let i = 0; i <= 11; i++) {
-                const mateName = state.following
+                const mateName = `p"${state.teamName}"${i}`
                 if (state.action.act == FL && mgr.getVisible(mateName) && Math.abs(mgr.getDistance(mateName) - mgr.getDistance(state.action.fl)) < 3) {
                     return true
                 }
@@ -70,7 +70,7 @@ const DT = {
             }
             console.log(`${state.number}: following ${state.following} ${mgr.getAngle(state.following) > 0} ${visibleMates.length}`);
             if (visibleMates.length > 1 && followingMate != undefined) {
-                return mgr.getAngle(state.following) != mgr.getAngle(followingMate)
+                return (Math.sign(mgr.getAngle(state.following)) != Math.sign(mgr.getAngle(followingMate))) == mgr.getAngle(state.following) > 0
             }
             return mgr.getAngle(state.following) > 0
         },

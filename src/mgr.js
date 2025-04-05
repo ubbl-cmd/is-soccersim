@@ -2,13 +2,13 @@ class Mgr {
     constructor() {}
     getAction(dt, p) {
         this.p = p;
-        this.pivo = {}
+        this.objects = {}
         for (let obj of this.p) {
             if (obj.cmd && obj.p) {
                 const name = obj.cmd.p.join('')
-                this.pivo[name] = {d: obj.p[0], a: obj.p[1]}
+                this.objects[name] = {d: obj.p[0], a: obj.p[1]}
                 if (obj.p.length >= 3) {
-                    this.pivo[name].distChange = obj.p[2];
+                    this.objects[name].distChange = obj.p[2];
                 }
             }
         }
@@ -34,21 +34,21 @@ class Mgr {
         return execute(dt, "root")
     }
     getVisible(fl) {
-        return this.pivo[fl] !== undefined
+        return this.objects[fl] !== undefined
     }
     getDistance(fl) {
         if (this.getVisible(fl))
-            return this.pivo[fl].d
+            return this.objects[fl].d
     }
     getDistChange(fl) {
         if (this.getVisible(fl))
-            if (this.pivo[fl].distChange)
-                return this.pivo[fl].distChange
+            if (this.objects[fl].distChange)
+                return this.objects[fl].distChange
             return 0
     }
     getAngle(fl) {
         if (this.getVisible(fl))
-            return this.pivo[fl].a
+            return this.objects[fl].a
     }
 }
 

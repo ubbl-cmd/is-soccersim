@@ -70,7 +70,7 @@ const DT = {
             }
             console.log(`${state.number}: following ${state.following} ${mgr.getAngle(state.following) > 0} ${visibleMates.length}`);
             if (visibleMates.length > 1 && followingMate != undefined) {
-                return (Math.sign(mgr.getAngle(state.following)) != Math.sign(mgr.getAngle(followingMate))) == mgr.getAngle(state.following) > 0
+                return (Math.sign(mgr.getAngle(state.following)) == Math.sign(mgr.getAngle(followingMate))) != (mgr.getAngle(state.following) > 0)
             }
             return mgr.getAngle(state.following) > 0
         },

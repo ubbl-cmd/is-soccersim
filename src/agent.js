@@ -1,19 +1,25 @@
 const Msg = require('./msg');
-const Mgr = require('./mgr');
+const Mgr = require('./misc/TA/mgr');
 const Flags = require('./misc/flags');
 const readline = require('readline');
 
 class Agent {
-    constructor() {
-        this.position = 1;
+    constructor(teamName, role) {
+        this.role = role;
+        this.position = "l";
+        this.teamName = teamName;
         this.run = false;
         this.act = null;
-        this.dt = null;
-        this.mgr = new Mgr()
+        if (this.role == "goalie") {
+            this.ta = require('./misc/TA/goalie')
+        } else if (this.role == "nothing") {
+            this.ta = null
+        } else {
+            this.ta = require('./misc/TA/atack')
+        }
     }
     msgGot(msg) {
         let data = msg.toString('utf-8');
-
         this.proccessMsg(data);
         this.sendMsg();
     }
@@ -21,13 +27,18 @@ class Agent {
         this.socket = socket;
     }
     socketSend(cmd, value) {
-        
         this.socket.sendMsg(`(${cmd} ${value})`);
     }
     proccessMsg(msg) {
         let data = Msg.parseMsg(msg);
         if (!data) throw new Error('parse error:' + msg);
         if (data.cmd == 'init') this.initAgent(data.p);
+        if (data.cmd == 'hear' && data.p[1] == "referee") {
+            this.run = true
+            if (data.p[2] == 'play_on') {
+                this.run = true
+            }
+        }
         this.analyzeEnv(data.msg, data.cmd, data.p);
     }
     initAgent(p) {
@@ -35,24 +46,8 @@ class Agent {
         if (p[1]) this.id = p[1];
     }
     analyzeEnv(msg, cmd, p) {
-        if (cmd === 'hear') {
-            console.log(p);
-            this.mgr.sounds.push(p)
-            if (p[1] == 'referee' && p[2] == 'drop_ball') {
-
-            } else if (p[1] == 'referee' && p[2] == 'play_on') {
-                this.run = true;
-            } else if (p[1] == 'referee' && (p[2] == 'kick_off_r' || p[2] == 'kick_off_l' || p[2] == 'kick_off_r')) {
-                this.run = false;
-            } else if (p[1] == 'referee' && p[2].startsWith('goal_')) {
-                this.run = false;
-                this.dt.state.next = 0;
-            } else if (p[1] == 'referee' && p[2].startsWith('half_time')) {
-                this.run = false;
-            }
-        }
-        if (cmd === 'see' && this.run) {
-            this.act = this.mgr.getAction(this.dt, p)
+        if (cmd == "see" && this.run) {
+            this.act = Mgr.getAction(p, this.ta, this.teamName, this.position, false)
         }
     }
     sendMsg() {
@@ -64,7 +59,6 @@ class Agent {
                     this.socketSend(this.act.n, this.act.v)
                 }
                 this.act = null
-                this.dt.state.command = null
             }
         }
     }

@@ -36,7 +36,8 @@ class Agent {
     }
     analyzeEnv(msg, cmd, p) {
         if (cmd === 'hear') {
-            // console.log(p[1], p[2]);
+            console.log(p);
+            this.mgr.sounds.push(p)
             if (p[1] == 'referee' && p[2] == 'drop_ball') {
 
             } else if (p[1] == 'referee' && p[2] == 'play_on') {
@@ -45,14 +46,13 @@ class Agent {
                 this.run = false;
             } else if (p[1] == 'referee' && p[2].startsWith('goal_')) {
                 this.run = false;
-                this.sequence_idx = 0;
+                this.dt.state.next = 0;
             } else if (p[1] == 'referee' && p[2].startsWith('half_time')) {
                 this.run = false;
             }
         }
         if (cmd === 'see' && this.run) {
             this.act = this.mgr.getAction(this.dt, p)
-            
         }
     }
     sendMsg() {

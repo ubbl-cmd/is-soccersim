@@ -1,5 +1,7 @@
 class Mgr {
-    constructor() {}
+    constructor() {
+        this.sounds = []
+    }
     getAction(dt, p) {
         this.p = p;
         this.objects = {}
@@ -49,6 +51,9 @@ class Mgr {
     getAngle(fl) {
         if (this.getVisible(fl))
             return this.objects[fl].a
+    }
+    getSound(t) {
+        return this.sounds[this.sounds.length - 1][2] == t
     }
 }
 

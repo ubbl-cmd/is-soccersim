@@ -15,6 +15,10 @@ const DT = {
         exec(mgr, state) {
             state.action = state.sequence[state.next];
             state.command = null;
+            if (state.next == 0) {
+                state.passHeared = false
+                passHearedDt = 0
+            }
         },
         next: "ballVisible",
     },

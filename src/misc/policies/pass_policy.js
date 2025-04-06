@@ -59,15 +59,19 @@ const DT = {
         falseCond: "StrongPassAction",
     },
     weakPassAction: {
-        exec(mgr, state) { state.command = { n: 'kick', v: `20 ${mgr.getAngle(state.mateName)}` } },
+        exec(mgr, state) { 
+            console.log('wpa', state.mateName, mgr.getAngle(state.mateName))
+            state.command = { n: 'kick', v: `20 ${mgr.getAngle(state.mateName)}` 
+        } },
         next: 'sendCommand',
     },
     StrongPassAction: {
         exec(mgr, state) { 
+            console.log('spa', state.mateName, mgr.getAngle(state.mateName))
             if (mgr.getVisible(state.action.goal)) {
-                state.command = { n: 'kick', v: `100 ${mgr.getAngle(state.mateName)/2 + mgr.getAngle(state.action.goal)/2}` } 
+                state.command = { n: 'kick', v: `50 ${mgr.getAngle(state.mateName)/2 + mgr.getAngle(state.action.goal)/2}` } 
             } else {
-                state.command = { n: 'kick', v: `100 ${mgr.getAngle(state.mateName)}` } 
+                state.command = { n: 'kick', v: `50 ${mgr.getAngle(state.mateName)}` } 
             }
         },
         next: 'closeFlagAndSendCommand',

@@ -17,7 +17,7 @@ for (let i = 0; i < 2; i++) {
         agent.dt = Object.assign({}, afk_policy)
         agent.dt.state = { ...agent.dt.state }
     } else {
-        agent.dt = Object.assign({}, goalie_poliy)
+        agent.dt = Object.assign({}, afk_policy) //goalie_policy
         agent.dt.state = { ...agent.dt.state }
     }
     agent.dt.state.teamName = team

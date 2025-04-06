@@ -43,7 +43,7 @@ const DT = {
         falseCond: "lineVisible",
     },
     gSeek: {
-        condition: (mgr, state) => mgr.getDistance(state.g) > 5,
+        condition: (mgr, state) => mgr.getDistance(state.g) > 0.5,
         trueCond: "farG",
         falseCond: "lineVisible",
     },
@@ -123,8 +123,35 @@ const DT = {
         next: "sendCommand"
     },
     runBack: {
+        condition: (mgr, state) => {
+            let cond = true
+            if (mgr.getVisible(state.fpSidec)) {
+                cond = cond && mgr.getDistance(state.fpSidec) > 12
+            }
+            let cond1 = cond
+            let cond2 = false
+            let cond3 = false
+            if (mgr.getVisible(state.fpSideb)) {
+                cond = cond && mgr.getDistance(state.fpSideb) > 20
+                cond2 = cond
+            }
+            if (mgr.getVisible(state.fpSidet)) {
+                cond = cond && mgr.getDistance(state.fpSidet) > 20
+                cond3 = cond
+            }
+            return cond
+        },
+        trueCond: "runForwardAction",
+        falseCond: "runBackAction",
+    },
+    runForwardAction: {
         exec(mgr, state) {
-            //console.log("goBack")
+            state.command = { n: "dash", v: `100` }
+        },
+        next: "sendCommand"
+    },
+    runBackAction: {
+        exec(mgr, state) {
             state.command = { n: "dash", v: `100 -180` }
         },
         next: "sendCommand"

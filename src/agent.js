@@ -1,7 +1,9 @@
 const Msg = require('./msg');
-const Mgr = require('./misc/TA/mgr');
 const Flags = require('./misc/flags');
 const readline = require('readline');
+const low = require("./misc/controllers/atack/low")
+const middle = require("./misc/controllers/atack/middle")
+const high = require("./misc/controllers/atack/high")
 
 class Agent {
     constructor(teamName, role) {
@@ -10,12 +12,23 @@ class Agent {
         this.teamName = teamName;
         this.run = false;
         this.act = null;
+        this.controllers = []
         if (this.role == "goalie") {
-            this.ta = require('./misc/TA/goalie')
+            this.controllerLow = require("./misc/controllers/goalie/low");
+            this.controllerMiddle = require("./misc/controllers/goalie/middle");
+            this.controllerHigh = require("./misc/controllers/goalie/high");
+            this.controllers.push(this.controllerLow);
+            this.controllers.push(this.controllerMiddle);
+            this.controllers.push(this.controllerHigh);
         } else if (this.role == "nothing") {
-            this.ta = null
-        } else {
-            this.ta = require('./misc/TA/atack')
+
+        } else if (this.role == "atack") {
+            this.controllerLow = Object.assign({}, lowя)
+            this.controllerMiddle = Object.assign({}, middle)
+            this.controllerHigh = Object.assign({}, high)
+            this.controllers.push(this.controllerLow);
+            this.controllers.push(this.controllerMiddle);
+            this.controllers.push(this.controllerHigh);
         }
     }
     msgGot(msg) {
@@ -47,7 +60,7 @@ class Agent {
     }
     analyzeEnv(msg, cmd, p) {
         if (cmd == "see" && this.run) {
-            this.act = Mgr.getAction(p, this.ta, this.teamName, this.position, false)
+            this.act = this.controllers[0].execute(p, this.controllers.slice(1), this.teamName, this.position, this.id)
         }
     }
     sendMsg() {
@@ -62,20 +75,6 @@ class Agent {
             }
         }
     }
-}
-
-function positionCalculator(d1, d2, d3) {
-    const beta1 = (d2.y ** 2 - d1.y ** 2 + d2.x ** 2 - d1.x ** 2 + d1.d ** 2 - d2.d ** 2) / 2 / (d2.x - d1.x + 0.01);
-    const beta2 = (d3.y ** 2 - d1.y ** 2 + d3.x ** 2 - d1.x ** 2 + d1.d ** 2 - d3.d ** 2) / 2 / (d3.x - d1.x + 0.01);
-    const alpha1 = (d1.y - d2.y) / (d2.x - d1.x + 0.01);
-    const alpha2 = (d1.y - d3.y) / (d3.x - d1.x + 0.01);
-    const y = (beta1 - beta2) / (alpha2 - alpha1 + 0.01);
-    const x = alpha1 * (beta1 - beta2) / (alpha2 - alpha1 + 0.01) + beta1;
-    return { x: x, y: y, err: Math.abs(d1.x ** 2 + d1.y ** 2 - d1.d ** 2) }
-}
-
-function shiftDistance(d1, d2) {
-    return Math.sqrt(d1.d ** 2 + d2.d ** 2 - 2 * d1.d * d2.d * Math.cos(Math.abs(d1.a - d2.a) * 0.0175))
 }
 
 module.exports = Agent;

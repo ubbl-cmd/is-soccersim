@@ -1,13 +1,9 @@
 const Taken = require('../../taken')
 
 const AtackMiddle = {
-    action: "seekBall",
-    nearGoal: false,
+    action: "comeCloserToGoal",
+    waitGoal: "fglt",
     execute(input, controllers) {
-        console.log(`${input.id} ${this.action} ${this.nearGoal}`);
-        if (this.nearGoal) {
-            this.action = "waitBallAction"
-        }
         const next = controllers[0]
         switch (this.action) {
             case "seekBall":
@@ -21,18 +17,17 @@ const AtackMiddle = {
                 break;
         }
         input.action = this.action;
-        input.nearGoal = this.nearGoal
 
 
         if (next) {
             const command = next.execute(input, controllers.slice(1))
             if (command) return command
             if (input.newAction) this.action = input.newAction
+            input.newAction = undefined
             return input.cmd
         }
     },
     seekBall(input) {
-        this.nearGoal = false
         if (!input.ball) {
             return { n: "turn", v: 40 }
         }
@@ -44,33 +39,35 @@ const AtackMiddle = {
         }
     },
     waitBallAction(input) {
+        console.log("waitBallAction", input.ball);
+        
         let ball = input.ball
         if (!ball) {
             return { n: "turn", v: 30 }
         }
-        if (Math.abs(ball.angle) > 15) {
+        if (Math.abs(ball.angle) > 5) {
             return { n: "turn", v: ball.angle }
         }
-        return { n: "turn", v: ball.angle };
+        return { n: "turn", v: 0 };
     },
     comeCloserToGoal(input) {
-        if (!this.nearGoal) {
-            let goal = input.goal
-            if (!goal) {
-                return { n: "turn", v: 40 }
-            }
-            if (Math.abs(goal.angle) > 10) {
-                return { n: "turn", v: goal.angle }
-            }
-            console.log(`goal dist: ${goal.dist}`);
+        let goal = input.flags[this.waitGoal]
+        console.log(input.id, "comeCloserToGoal", goal);
 
-            if (goal.dist > 20) {
-                return { n: "dash", v: 75 }
-            }
-            this.nearGoal = true
-            console.log('iAmNear');
+        if (!goal) {
+            return { n: "turn", v: 40 }
         }
-        return this.waitBallAction(input)
+        if (Math.abs(goal.angle) > 10) {
+            return { n: "turn", v: goal.angle }
+        }
+        console.log(`goal dist: ${goal.dist}`);
+
+        if (goal.dist > 3) {
+            return { n: "dash", v: 75 }
+        }
+        this.action = 'waitBallAction'
+        console.log("wb");
+        
     },
 }
 module.exports = AtackMiddle;

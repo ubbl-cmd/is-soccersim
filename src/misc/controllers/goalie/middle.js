@@ -23,7 +23,10 @@ const GoalieMiddle = {
         if (next) {
             const command = next.execute(input, controllers.slice(1))
             if (command) return command
-            if (input.newAction) this.action = input.newAction
+            if (input.newAction) {
+                this.action = input.newAction
+                input.newAction = undefined
+            }
             return input.cmd
         }
     },

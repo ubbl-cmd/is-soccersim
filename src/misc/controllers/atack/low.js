@@ -12,21 +12,13 @@ const GoalieLow = {
 
         let temp = false
         if (this.taken.teamOwn.length) {
-            this.taken.teamOwn.forEach(player => {
-                if (player.dist < 5) {
+            for (let player of this.taken.teamOwn) {
+                if (player.dist < 3) {
                     temp = true
-                    this.taken.playerClose = true
                 }
-            })
+            }
         }
-        if (!temp)
-            this.taken.playerClose = false
-        else
-            this.taken.playerClose = true
-
-        if (this.taken.goal && this.taken.goal.dist < 20) {
-            this.taken.nearGoal = true
-        }
+        this.taken.playerClose = temp
         if (next)
             return next.execute(this.taken, controllers.slice(1))
     }

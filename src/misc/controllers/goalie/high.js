@@ -19,15 +19,15 @@ const GoalieHigh = {
                 return { n: "kick", v: `100 ${input.goal.angle}` }
             return { n: "kick", v: `10 45` }
         }
-        if (this.last == "catch") {
+        if (this.last == "catch" && input.ball) {
             this.last = "defend"
-            return { n: "dash", v: `100 ${input.ball}` }
+            return { n: "dash", v: `100 ${input.ball.angle}` }
         }
         if (input.canCatch) {
             console.log('can kick');
 
             this.last = "catch"
-            return { n: "catch", v: input.ball }
+            return { n: "catch", v: input.ball.angle }
         }
     },
     defendGoal(input) {

@@ -23,7 +23,7 @@ class Agent {
         } else if (this.role == "nothing") {
 
         } else if (this.role == "atack") {
-            this.controllerLow = Object.assign({}, lowя)
+            this.controllerLow = Object.assign({}, low)
             this.controllerMiddle = Object.assign({}, middle)
             this.controllerHigh = Object.assign({}, high)
             this.controllers.push(this.controllerLow);
@@ -40,6 +40,8 @@ class Agent {
         this.socket = socket;
     }
     socketSend(cmd, value) {
+        console.log(`${this.id}(${cmd} ${value})`);
+        
         this.socket.sendMsg(`(${cmd} ${value})`);
     }
     proccessMsg(msg) {
@@ -57,6 +59,22 @@ class Agent {
     initAgent(p) {
         if (p[0] == 'r') this.position = "r";
         if (p[1]) this.id = p[1];
+        if (this.id == 2) {
+            this.controllerMiddle.waitGoal = this.position == "r" ? "fplb" : "fprb"
+        }
+        if (this.id == 3) {
+            this.controllerMiddle.waitGoal = this.position == "r" ? "fplt" : "fprt"
+        }
+        if (this.id == 4) {
+            this.controllerMiddle.waitGoal = this.position == "r" ? "fprb" : "fplb"
+        }
+        if (this.id == 5) {
+            this.controllerMiddle.waitGoal = this.position == "r" ? "fprt" : "fplt"
+        }
+        if (this.id == 6) {
+            this.controllerMiddle.waitGoal = this.position == "r" ? "fc" : "fc"
+            this.controllerMiddle.action = "seekBall"
+        }
     }
     analyzeEnv(msg, cmd, p) {
         if (cmd == "see" && this.run) {

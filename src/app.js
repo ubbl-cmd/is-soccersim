@@ -4,7 +4,7 @@ const VERSION = 7;
 
 let team = "teamA";
 
-for (let i = 1; i < 3; i++) {
+for (let i = 0; i < 6; i++) {
     setTimeout(
         () => {
             let agent = new Agent(team, i == 0 ? "goalie" : "atack");
